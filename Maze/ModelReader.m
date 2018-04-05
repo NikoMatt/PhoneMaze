@@ -31,11 +31,11 @@
     
     for (NSString *line in lines) {
         if([line hasPrefix:@"v "]) {
-            [ModelReader parseVert:line buffer:&startVertices buffSize:&startVertSize];
+            [ModelReader parseVert:line buffer:&startVertices buffSize:&startVertSize tex: false];
         } else if([line hasPrefix:@"vt"]) {
-            [ModelReader parseVert:line buffer:&startTexels buffSize:&startTexSize];
+            [ModelReader parseVert:line buffer:&startTexels buffSize:&startTexSize tex: true];
         } else if([line hasPrefix:@"vn"]) {
-            [ModelReader parseVert:line buffer:&startNormals buffSize:&startNormSize];
+            [ModelReader parseVert:line buffer:&startNormals buffSize:&startNormSize tex: false];
         } else if([line hasPrefix:@"f "]) {
             [ModelReader parseFace:line buffer:&faces buffSize:&faceSize];
         }
@@ -51,15 +51,15 @@
         memcpy(vertices + i * 9, startVertices + faces[i * 9] * 3, sizeof(float) * 3);
         memcpy(texels + i * 6, startTexels + faces[i * 9 + 1] * 3, sizeof(float) * 2);
         memcpy(normals + i * 9, startNormals + faces[i * 9 + 2] * 3, sizeof(float) * 3);
-        indices[i * 3] = i * 3;
         memcpy(vertices + i * 9 + 3, startVertices + faces[i * 9 + 3] * 3, sizeof(float) * 3);
         memcpy(texels + i * 6 + 2, startTexels + faces[i * 9 + 4] * 3, sizeof(float) * 2);
         memcpy(normals + i * 9 + 3, startNormals + faces[i * 9 + 5] * 3, sizeof(float) * 3);
-        indices[i * 3 + 1] = i * 3 + 1;
         memcpy(vertices + i * 9 + 6, startVertices + faces[i * 9 + 6] * 3, sizeof(float) * 3);
         memcpy(texels + i * 6 + 4, startTexels + faces[i * 9 + 7] * 3, sizeof(float) * 2);
         memcpy(normals + i * 9 + 6, startNormals + faces[i * 9 + 8] * 3, sizeof(float) * 3);
-        indices[i * 3 + 2] = i * 3 + 2;
+    }
+    for(int i = 0; i < faceSize * 3; i++) {
+        indices[i] = i;
     }
     
     free(startNormals);
@@ -79,7 +79,7 @@
     
 }
 
-+ (void) parseVert:(NSString*)line buffer:(float**)buffer buffSize:(int*)buffSize {
++ (void) parseVert:(NSString*)line buffer:(float**)buffer buffSize:(int*)buffSize tex:(bool)tex{
     NSScanner *scan = [NSScanner scannerWithString:line];
     [scan setScanLocation:2];
     
@@ -94,6 +94,9 @@
     temp[*buffSize] = x;
     temp[*buffSize + 1] = y;
     temp[*buffSize + 2] = z;
+    if(tex) {
+        temp[*buffSize + 1] = 1 - y;
+    }
     *buffer = realloc(*buffer, sizeof(float) * (*buffSize + 3));
     memcpy(*buffer, temp, sizeof(float) * (*buffSize + 3));
     *buffSize += 3;

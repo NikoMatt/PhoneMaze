@@ -28,6 +28,11 @@
 - (void)flashlightOff;
 - (void)addModel:(Model*)mod;
 - (void)addCube:(GLKMatrix4)loc;
+- (void)toggleEnemy;
+- (void)rotateEnemy:(float)x y:(float)y z:(float)z;
+- (void)translateEnemy:(float)x y:(float)y z:(float)z;
+- (void)scaleEnemy:(float)value;
+
 
 @end
 

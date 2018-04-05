@@ -44,6 +44,7 @@ enum
     GLKMatrix4 mvp;
     GLKMatrix3 normalMatrix;
     Model *cube, *enemy;
+    bool enemyMoving;
 }
 
 @end
@@ -126,10 +127,13 @@ enum
     cube.indices = indices;
     cube.texIndex = 1;
     
-    [modelList addObject:cube];
+    //[modelList addObject:cube];
     
+    enemyMoving = true;
     enemy = [ModelReader readModel:@"Cactuar"];
+    [enemy translate:-5 y:-0.5 z:-5];
     [enemy scale:0.00015 y:0.00015 z: 0.00015];
+    [enemy rotate:0 y:M_PI z:0];
     [modelList addObject:enemy];
 }
 
@@ -291,6 +295,28 @@ enum
 
 - (void)addCube:(GLKMatrix4)loc {
     cube.transform = loc;
+}
+
+- (void)toggleEnemy {
+    enemyMoving = !enemyMoving;
+}
+
+- (void)rotateEnemy:(float)x y:(float)y z:(float)z {
+    if(!enemyMoving) {
+        [enemy rotate:x y:y z:z];
+    }
+}
+
+- (void)translateEnemy:(float)x y:(float)y z:(float)z {
+    if(!enemyMoving) {
+        [enemy translate:x y:y z:z];
+    }
+}
+
+- (void)scaleEnemy:(float)value {
+    if(!enemyMoving) {
+        [enemy scale:value y:value z:value];
+    }
 }
 
 @end

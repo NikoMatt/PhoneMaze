@@ -38,6 +38,26 @@
     [singleDragRecognizer setMaximumNumberOfTouches:1];
     [self.view addGestureRecognizer:singleDragRecognizer];
     
+    UIPanGestureRecognizer * doubleDragRecognizer = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(doubleDragResponder:)];
+    [doubleDragRecognizer setMinimumNumberOfTouches:2];
+    [doubleDragRecognizer setMaximumNumberOfTouches:2];
+    [self.view addGestureRecognizer:doubleDragRecognizer];
+    
+    UIPanGestureRecognizer * tripleDragRecognizer = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(tripleDragResponder:)];
+    [tripleDragRecognizer setMinimumNumberOfTouches:3];
+    [tripleDragRecognizer setMaximumNumberOfTouches:3];
+    [self.view addGestureRecognizer:tripleDragRecognizer];
+    
+    UIPanGestureRecognizer * quadDragRecognizer = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(quadDragResponder:)];
+    [quadDragRecognizer setMinimumNumberOfTouches:4];
+    [quadDragRecognizer setMaximumNumberOfTouches:4];
+    [self.view addGestureRecognizer:quadDragRecognizer];
+
+    
+
+    UIPinchGestureRecognizer *pinchRecognizer = [[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(pinchResponder:)];
+    [self.view addGestureRecognizer:pinchRecognizer];
+    
     UITapGestureRecognizer * tapRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapResponder:)];
     [tapRecognizer setNumberOfTouchesRequired:1];
     [tapRecognizer setNumberOfTapsRequired:2];
@@ -48,6 +68,11 @@
     [doubleTapRecognizer setNumberOfTapsRequired:2];
     [self.view addGestureRecognizer:doubleTapRecognizer];
     
+    UITapGestureRecognizer * tripleTapRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tripleTapResponder:)];
+    [tripleTapRecognizer setNumberOfTouchesRequired:3];
+    [tripleTapRecognizer setNumberOfTapsRequired:2];
+    [self.view addGestureRecognizer:tripleTapRecognizer];
+
     maze = [[MazeObject alloc] init:glesRenderer row:10 col:10];
     
     glesRenderer.camera.transform = GLKMatrix4Translate(maze.startLocation, 0, 0, -1.5f);
@@ -71,6 +96,21 @@
         [glesRenderer.camera translate:0 y:0 z:-.1];
 }
 
+- (void)doubleDragResponder: (UIPanGestureRecognizer *) sender {
+    CGPoint vector = [sender velocityInView:self.view];
+    [glesRenderer translateEnemy:vector.x y:0 z:vector.y];
+}
+
+- (void)tripleDragResponder: (UIPanGestureRecognizer *) sender {
+    CGPoint vector = [sender velocityInView:self.view];
+    [glesRenderer translateEnemy:0 y:-vector.y z:0];
+}
+
+- (void)quadDragResponder: (UIPanGestureRecognizer *) sender {
+    CGPoint vector = [sender velocityInView:self.view];
+    [glesRenderer rotateEnemy:vector.y / 5000 y:vector.x / 5000 z:0];
+}
+
 - (void)tapResponder: (UITapGestureRecognizer *) sender {
     glesRenderer.camera.transform = GLKMatrix4Translate(maze.startLocation, 0, 0, -1.5f);
     [glesRenderer.camera rotate:0 y:M_PI z:0];
@@ -78,6 +118,13 @@
 
 - (void)doubleTapResponder: (UITapGestureRecognizer *) sender {
     
+}
+- (void)pinchResponder: (UIPinchGestureRecognizer *) sender {
+    [glesRenderer scaleEnemy:1 + sender.velocity /10];
+}
+
+- (void)tripleTapResponder: (UITapGestureRecognizer *) sender {
+    [glesRenderer toggleEnemy];
 }
 
 - (void)didReceiveMemoryWarning {

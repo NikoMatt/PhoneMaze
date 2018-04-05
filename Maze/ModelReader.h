@@ -15,7 +15,8 @@
 @interface ModelReader : NSObject
 
 + (Model*)readModel:(NSString*)res;
-+ (void) parseVert:(NSString*)line buffer:(float**)buffer buffSize:(int*)buffSize;
++ (void) parseVert:(NSString*)line buffer:(float**)buffer buffSize:(int*)buffSize tex:(bool)tex;
++ (void) parseFace:(NSString*)line buffer:(int**)buffer buffSize:(int*)buffSize;
 
 @end
 

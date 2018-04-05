@@ -62,6 +62,4 @@
     self.transform = GLKMatrix4Scale(self.transform, x, y, z);
 }
 
-
-
 @end
